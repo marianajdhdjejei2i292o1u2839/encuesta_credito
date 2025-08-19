@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Exitoso</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f3f3;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+        }
+
+        h2 {
+            color: #2b3d51;
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        .nip {
+            font-size: 1.8em;
+            color: #d32f2f;
+            font-weight: bold;
+        }
+
+        .warning {
+            color: #b71c1c;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        button {
+            margin-top: 30px;
+            padding: 10px 30px;
+            background-color: #264653;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #1b2e3a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>¡Tu registro fue exitoso!</h2>
+        <p>Gracias por responder la encuesta.</p>
+
+        <p><strong>Tu NIP registrado fue: <span class="nip">{{ nip }}</span></strong></p>
+
+        <p class="warning">
+            ⚠️ IMPORTANTE: Este NIP será necesario para trámites futuros. No lo pierdas.
+        </p>
+        <p>
+            Te recomendamos tomar una <strong>captura de pantalla</strong> de este mensaje como respaldo.
+        </p>
+
+        <a href="/"><button>Volver al inicio</button></a>
+    </div>
+</body>
+</html>

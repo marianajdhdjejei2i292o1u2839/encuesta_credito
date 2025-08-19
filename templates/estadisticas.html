@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>📊 Estadísticas por Analista y Fecha</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f5efe6;
+            color: #3b3b3b;
+            font-family: 'Segoe UI', sans-serif;
+            height: 100vh;
+            background-image: url('/static/fondofona.jpg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .marqueta-superior,
+        .marqueta-inferior {
+            height: 100px;
+            background-color: #5F0F2A;
+            width: 100%;
+            position: absolute;
+            left: 0;
+            z-index: 1;
+        }
+
+        .marqueta-superior { top: 0; }
+        .marqueta-inferior { bottom: 0; }
+
+        .contenido {
+            padding-top: 120px;
+            padding-bottom: 100px;
+            z-index: 2;
+            position: relative;
+            text-align: center;
+        }
+
+        select {
+            font-size: 16px;
+            padding: 8px;
+            margin: 10px;
+        }
+
+        .graficas {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .grafica-card {
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            width: 260px;
+            box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        canvas {
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            width: 220px !important;
+            height: 220px !important;
+        }
+
+        h2 { color: #5F0F2A; }
+        ul { list-style: none; padding: 0; margin-top: 10px; }
+        li { background: #eee; margin: 3px 0; padding: 5px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="marqueta-superior"></div>
+    <div class="marqueta-inferior"></div>
+
+    <div class="contenido">
+        <h2>📊 Estadísticas por Analista y Fecha</h2>
+
+        <label><strong>Selecciona un analista:</strong></label>
+        <select id="analistaSelect">
+            <option value="Todos">-- Ver todos --</option>
+            <option>Andrea Olivia Colín Gómez</option>
+            <option>Ananke Danae Pérez Pavón</option>
+            <option>Angélica Coronel Ayala</option>
+            <option>Bedolla Rodríguez Jorge Omar</option>
+            <option>Colín Jacobo Anaís</option>
+            <option>Delgado Piña Roberto</option>
+            <option>Escutia Heraz Raúl</option>
+            <option>Fonseca Jiménez Rut Judit</option>
+            <option>García Cortez Miguel Ángel</option>
+            <option>García Rojas Sandra</option>
+            <option>Garrido Bernaldez Raúl Rodrigo</option>
+            <option>Gil Iniesta Katia Yazmín</option>
+            <option>González Páez Edgar</option>
+            <option>Mauricio García Labastida</option>
+            <option>Ramírez Becerra Izael Francisco</option>
+            <option>Romero Domínguez Víctor Manuel</option>
+        </select>
+
+        <label><strong>Selecciona una fecha:</strong></label>
+        <select id="fechaSelect">
+            <option value="Todas">-- Ver todas --</option>
+        </select>
+
+        <div id="contenedorGraficas" class="graficas"></div>
+    </div>
+
+    <script>
+        let allData = [];
+
+        fetch('/datos_grafico')
+            .then(res => res.json())
+            .then(res => {
+                allData = res.data;
+                cargarFechasUnicas(allData);
+                renderCharts("Todos", "Todas");
+            });
+
+        const analistaSelect = document.getElementById('analistaSelect');
+        const fechaSelect = document.getElementById('fechaSelect');
+        const contenedorGraficas = document.getElementById('contenedorGraficas');
+
+        analistaSelect.addEventListener('change', () => {
+            renderCharts(analistaSelect.value, fechaSelect.value);
+        });
+
+        fechaSelect.addEventListener('change', () => {
+            renderCharts(analistaSelect.value, fechaSelect.value);
+        });
+
+        let charts = [];
+
+        function cargarFechasUnicas(data) {
+            const fechas = new Set();
+            data.forEach(r => { if (r.fecha) fechas.add(r.fecha); });
+            [...fechas].sort().forEach(fecha => {
+                const opt = document.createElement('option');
+                opt.value = fecha;
+                opt.textContent = fecha;
+                fechaSelect.appendChild(opt);
+            });
+        }
+
+        function renderCharts(filtroAnalista, filtroFecha) {
+            charts.forEach(chart => chart.destroy());
+            charts = [];
+            contenedorGraficas.innerHTML = "";
+
+            const campos = [
+                { campo: 'p1', titulo: '1. El personal me trató con respeto' },
+                { campo: 'p2', titulo: '2. Recibí apoyo cuando tuve dudas o dificultades' },
+                { campo: 'p3', titulo: '3. Me atendieron con paciencia sin apurarse ni mostrar molestia' },
+                { campo: 'p4', titulo: '4. El tiempo que esperé para ser atendido/a fue razonable' },
+                { campo: 'p5', titulo: '5. La persona que me atendió fue eficiente y profesional' },
+                { campo: 'p6', titulo: '6. Recibí la información de mi crédito de forma clara' }
+            ];
+
+            let filtrados = allData;
+            if (filtroAnalista !== 'Todos') filtrados = filtrados.filter(e => e.analista === filtroAnalista);
+            if (filtroFecha !== 'Todas') filtrados = filtrados.filter(e => e.fecha === filtroFecha);
+
+            campos.forEach((p, idx) => {
+                const conteo = {};
+                filtrados.forEach(e => {
+                    const valor = e[p.campo];
+                    if (valor) conteo[valor] = (conteo[valor] || 0) + 1;
+                });
+
+                // Crear card para gráfica + resumen
+                const card = document.createElement('div');
+                card.classList.add('grafica-card');
+
+                const canvas = document.createElement('canvas');
+                canvas.id = "grafico_" + idx;
+                card.appendChild(canvas);
+
+                // Lista de resumen debajo de la gráfica
+                const lista = document.createElement('ul');
+                for (let opcion in conteo) {
+                    const li = document.createElement('li');
+                    li.textContent = `${opcion}: ${conteo[opcion]} respuestas`;
+                    lista.appendChild(li);
+                }
+                card.appendChild(lista);
+
+                contenedorGraficas.appendChild(card);
+
+                // Crear gráfico
+                const ctx = canvas.getContext('2d');
+                const chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(conteo),
+                        datasets: [{
+                            label: p.titulo,
+                            data: Object.values(conteo),
+                            backgroundColor: ['#42a5f5', '#ef5350', '#66bb6a', '#ffca28', '#ab47bc']
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            title: { display: true, text: p.titulo },
+                            legend: { display: false }
+                        },
+                        responsive: true,
+                        scales: { y: { beginAtZero: true, precision: 0 } }
+                    }
+                });
+
+                charts.push(chart);
+            });
+        }
+    </script>
+</body>
+</html>

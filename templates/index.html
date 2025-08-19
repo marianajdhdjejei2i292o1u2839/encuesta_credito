@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inicio - Sistema de Encuestas Fonacot</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f5efe6;
+            color: #3b3b3b;
+            font-family: 'Segoe UI', sans-serif;
+            height: 100vh;
+            background-image: url('/static/fondofona.jpg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .marqueta-superior,
+        .marqueta-inferior {
+            height: 100px;
+            background-color: #5F0F2A;
+            width: 100%;
+            position: absolute;
+            left: 0;
+            z-index: 1;
+        }
+
+        .marqueta-superior {
+            top: 0;
+        }
+
+        .marqueta-inferior {
+            bottom: 0;
+        }
+
+        .boton-estadisticas {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            z-index: 5;
+        }
+
+        .boton-estadisticas button {
+            background-color: #fff;
+            color: #5F0F2A;
+            border: none;
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .boton-estadisticas button:hover {
+            background-color: #e8e8e8;
+        }
+
+        .contenido {
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 50px;
+            margin-bottom: 35px;
+            color: #949494;
+        }
+
+        p {
+            font-size: 28px;
+            margin-bottom: 50px;
+            color: #949494;
+        }
+
+        a button {
+            background-color: #5F0F2A;
+            color: white;
+            padding: 40px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 20px;
+            margin: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        /* ✅ BOTÓN PEQUEÑO PARA ENCUESTA */
+        .btn-encuesta-pequeno {
+            padding: 30px 15px;
+            font-size: 16px;
+        }
+
+        a button:hover {
+            background-color: #4a0c20;
+        }
+
+        .logos {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 3;
+        }
+
+        .logos img {
+            height: 60px;
+            margin-left: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .logos img {
+                height: 40px;
+            }
+
+            .boton-estadisticas {
+                top: 20px;
+                left: 15px;
+            }
+
+            .boton-estadisticas button {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Marquetas -->
+    <div class="marqueta-superior"></div>
+    <div class="marqueta-inferior"></div>
+
+    <!-- Botón pequeño en la marqueta -->
+    <div class="boton-estadisticas">
+        <a href="/login"><button>📊 Ver Estadísticas</button></a>
+    </div>
+
+    <!-- Logos -->
+    <div class="logos">
+        <img src="/static/logo1.png" alt="Logo 1">
+        <img src="/static/logo2.png" alt="Logo 2">
+        <img src="/static/logo_blanco.svg" alt="Logo 3">
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="contenido">
+        <h1>Sistema de Encuestas de Satisfacción y Verificación</h1>
+        <p>Evalúa el servicio recibido y valida tus documentos fácilmente.</p>
+
+        <!-- ✅ Botón de encuesta más pequeño -->
+        <a href="/encuesta"><button class="btn-encuesta-pequeno">📋 Iniciar Encuesta</button></a>
+
+        <br><br>
+
+        <h1>Sucursal Toluca Centro</h1>
+    </div>
+
+</body>
+</html>

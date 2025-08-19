@@ -1,0 +1,52 @@
+#banner{
+  float:left;
+  position:relative;
+  width: 100% !important;
+  vertical-align: middle;
+  vert-align: middle;
+}
+
+.banner-maxHeight{
+  min-height: 700px;
+  background-color: #F7F7F7;
+  text-align:center;
+}
+
+#banner .bannerClass {
+  position:absolute;
+  top:10px;
+  left:14px;
+  color:#000000;
+  width: 100%;
+}
+
+.bnn {
+  position: absolute;
+  top: 200px;
+  left: 0;
+  width: 100%;
+  vertical-align: middle;
+}
+
+h2 span {
+  font: bold 24px/45px Helvetica, Sans-Serif;
+  letter-spacing: -1px;
+  padding: 10px;
+}
+
+h2 span.spacer {
+  padding:0 5px;
+}
+
+.banner{
+  min-height: 250px;
+  text-align:left;
+  vertical-align: middle;
+}
+
+.textStyle {
+  display:inline-block;
+  width: 95%;
+  word-wrap: break-word;
+  margin: 0 auto;
+}

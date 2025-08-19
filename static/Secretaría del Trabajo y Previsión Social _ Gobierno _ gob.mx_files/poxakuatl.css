@@ -1,0 +1,196 @@
+.template-gobmx .section-intro__content {
+    max-width: 550px;
+}
+
+.template-gobmx .section-intro {
+    background-size: cover;
+    padding: 105px 0 105px;
+    color:  white;
+    min-height: 380px;
+}
+
+.template-gobmx .section-intro.banner {
+	text-align: left;
+	font-size: 3em;
+	font-weight: 700;
+}
+
+hr.red, h3.informative_sheets-title, .informative_sheets-seemore{
+    background-color: #1ebeb3;
+    height: 4px;
+    width: 115px;
+    border-top: 0 none !important;
+    color: transparent !important;
+}
+
+hr.red:before {
+	color: transparent !important;
+	background-color: transparent !important;
+}
+
+hr.red {
+	color: transparent !important;
+	background-color: transparent !important;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.template-gobmx .section-content__green {
+	background-color: #00c087; padding: 32px;
+}
+
+.template-gobmx .section-content__green h1 { color: white; font-size: 34px !important; font-weight: 300; }
+.template-gobmx .section-content__green .btn-outline {
+	-webkit-border-radius: 4px !important;
+	border-radius: 4px !important;
+	border: 2px solid white !important;
+	
+	background-color: transparent !important;
+	width: 100% !important;
+	color: white;
+	padding: 10px 14px;
+	margin-bottom: 14px;
+}
+
+.template-gobmx .section-content__green .btn-outline a {
+	font-weight: 700;
+	font-size: 21px;
+	position: relative;
+	color: white;
+	text-decoration: none;
+	font-weight: 700;	 
+	top: 8px;
+} 
+
+.template-gobmx .section-info h3 {
+	font-weight: 300;
+	text-transform: uppercase;
+	font-size: 2em;
+	color: #1ebeb3;
+	margin-bottom: 32px;
+}
+
+.template-gobmx .section-info .contianer {
+	border-bottom: 1px solid #ececec;
+}
+
+.template-gobmx .section-info h2 {
+	font-weight: 700;
+	font-size: 22px;
+	color: #1ebeb3;
+	margin-bottom: 0px !important;
+	text-decoration: underline;
+	margin-bottom: 34px;
+}
+
+.template-gobmx .section-info article h4 {
+	font-size: 22px;
+	color: black !important;
+}
+
+.template-gobmx .section-info article p {
+	color: black;
+}
+
+.section-info__content .circle {
+	border-radius: 300px;
+	width: 140px;
+	height: 140px;
+	background-color: #1ebeb3;
+}
+.section-info__content .circle p {
+	color: white !important;
+	font-size: 14px;
+	font-weight: 300;
+	padding-top: 40px;
+	padding-left:10px;
+	width: 130px;
+	text-align:center;
+}
+
+.template-gobmx .section-actions h2 {
+	font-weight: 300;
+	font-size: 22px;
+	color: #1ebeb3;
+	margin-bottom: 0px !important;
+}
+
+.template-gobmx .section-actions article h4 {
+	font-size: 22px;
+	color: black !important;
+}
+
+.template-gobmx .section-actions article p {
+	color: black;
+}
+
+.template-gobmx .section-info__content h2 {
+	font-weight: 300;
+	font-size: 24px;
+	color: #363874;
+}
+
+.template-gobmx .section-description__content h3 {
+        margin-top: 44px;
+	font-weight: 300;
+	color: black;
+	font-size: 24px;
+	color: #363874;
+	text-align: center;
+}
+
+.template-gobmx .section-description__content .intro_content {
+	text-align: center;
+}
+
+.template-gobmx .section-description__content h3 {
+	
+	color: #00c087;
+	margin-bottom: 32px;
+}
+
+.template-gobmx .section-info__content p {
+	color: black;
+}
+
+@media (max-width: 420px) {
+    .template-gobmx .section-intro {
+        padding: 85px 0 5px;
+        min-height: 280px !important;
+    }
+    .template-gobmx .section-intro img {
+        width: 240px !important;
+    }
+    .section-intro__content { display: none; }
+}
+
+@media (max-width: 768px) {
+
+	.template-gobmx .section-intro {
+		padding: 85px 0;
+	    height: 100px;
+	    min-height: 100px;
+	}
+
+	.template-gobmx .section-content__green .btn-outline:first-child {
+		margin-top: 24px;
+	}
+	.template-gobmx .section-content__green .btn-outline a {
+		font-weight: 700;	 
+		top: 4px;
+		font-size: 12px;
+	}
+}
+
+@media (max-width: 1280px) {
+    .template-gobmx .section-intro {
+        padding: 85px 0 5px;
+    }
+    .template-gobmx .section-intro img {
+        width: 400px;
+    }
+} 
+
+.template-gobmx .section-info {
+	color: #00c087;
+}
