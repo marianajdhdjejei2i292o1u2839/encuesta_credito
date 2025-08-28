@@ -4,24 +4,14 @@ from datetime import datetime
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-import os
-from dotenv import load_dotenv
-
-# ------------------- Cargar variables de entorno -------------------
-load_dotenv()  # Carga las variables del archivo .env en local
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY", "clave_secreta_default")  
+app.secret_key = "tu_clave_secreta_aqui"  # Cambia esto por algo seguro
 
-# ------------------- Configuración MongoDB Atlas -------------------
-MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
-MONGO_DB = os.getenv("MONGO_DB", "encuesta_credito")
-
-client = MongoClient(MONGO_URI)
-db = client[MONGO_DB]
+client = MongoClient("mongodb://localhost:27017/")
+db = client["encuesta_credito"]
 respuestas = db["respuestas"]
 
-# ------------------- Configuración de usuarios -------------------
 USUARIOS = {
     "RAUL GARRIDO": "TOLUCA2065",
     "ANGELICA CORONEL": "INFONA2025",
@@ -29,17 +19,17 @@ USUARIOS = {
 }
 
 # ------------------- CONFIGURACIÓN DE CORREO -------------------
-EMAIL_SENDER = os.getenv("EMAIL_SENDER", "fonacottoluca385@gmail.com")
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD", "")
+EMAIL_SENDER = "fonacottoluca385@gmail.com"  # Cambia por tu correo Gmail
+EMAIL_PASSWORD = "jmhcmnihkibwxcyx"  # Tu contraseña de aplicación de Gmail
 
 def enviar_correo(nip, correo_receptor, numero):
     try:
-        asunto = "REGISTRO EXITOSO FONACOT"
+        asunto = "REGITRO EXITOSO FONACOT"
         cuerpo = f"Se ha registrado un nuevo usuario:\n\nNIP: {nip}\nCorreo: {correo_receptor}\nNúmero: {numero}"
 
         mensaje = MIMEMultipart()
         mensaje["From"] = EMAIL_SENDER
-        mensaje["To"] = correo_receptor
+        mensaje["To"] = correo_receptor  # 📌 Ahora el receptor es dinámico
         mensaje["Subject"] = asunto
         mensaje.attach(MIMEText(cuerpo, "plain"))
 
@@ -65,8 +55,8 @@ def encuesta():
         respuestas.insert_one(datos)
 
         nip = datos.get('nip', '******')
-        correo = datos.get('correo', 'No proporcionado')
-        numero = datos.get('celular', 'No proporcionado')
+        correo = datos.get('correo', 'No proporcionado')   # 📌 Se toma del formulario
+        numero = datos.get('celular', 'No proporcionado')  # 📌 Corregido para tomar del campo correcto
 
         # Enviar correo al correo ingresado por el usuario
         enviar_correo(nip, correo, numero)
@@ -111,4 +101,4 @@ def datos_grafico():
     return {"data": data}
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(debug=True)
