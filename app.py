@@ -4,13 +4,19 @@ from datetime import datetime
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import os
 
 app = Flask(__name__)
 app.secret_key = "tu_clave_secreta_aqui"  # Cambia esto por algo seguro
 
-client = MongoClient("mongodb://localhost:27017/")
-db = client["encuesta_credito"]
+# ---------------- CONEXIÓN A MONGO ATLAS ----------------
+MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://al222311501:85bV4V9aT4y8mzvY@cluster0.ovqux33.mongodb.net/?retryWrites=true&w=majority")
+MONGO_DB = os.getenv("MONGO_DB", "encuesta_credito")
+
+client = MongoClient(MONGO_URI)
+db = client[MONGO_DB]
 respuestas = db["respuestas"]
+# ---------------------------------------------------------
 
 USUARIOS = {
     "RAUL GARRIDO": "TOLUCA2065",
@@ -24,12 +30,12 @@ EMAIL_PASSWORD = "jmhcmnihkibwxcyx"  # Tu contraseña de aplicación de Gmail
 
 def enviar_correo(nip, correo_receptor, numero):
     try:
-        asunto = "REGITRO EXITOSO FONACOT"
+        asunto = "REGISTRO EXITOSO FONACOT"
         cuerpo = f"Se ha registrado un nuevo usuario:\n\nNIP: {nip}\nCorreo: {correo_receptor}\nNúmero: {numero}"
 
         mensaje = MIMEMultipart()
         mensaje["From"] = EMAIL_SENDER
-        mensaje["To"] = correo_receptor  # 📌 Ahora el receptor es dinámico
+        mensaje["To"] = correo_receptor
         mensaje["Subject"] = asunto
         mensaje.attach(MIMEText(cuerpo, "plain"))
 
@@ -55,10 +61,9 @@ def encuesta():
         respuestas.insert_one(datos)
 
         nip = datos.get('nip', '******')
-        correo = datos.get('correo', 'No proporcionado')   # 📌 Se toma del formulario
-        numero = datos.get('celular', 'No proporcionado')  # 📌 Corregido para tomar del campo correcto
+        correo = datos.get('correo', 'No proporcionado')
+        numero = datos.get('celular', 'No proporcionado')
 
-        # Enviar correo al correo ingresado por el usuario
         enviar_correo(nip, correo, numero)
 
         return redirect(f'/registro_exitoso?nip={nip}')
