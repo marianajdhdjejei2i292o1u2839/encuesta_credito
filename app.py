@@ -7,17 +7,23 @@ from email.mime.multipart import MIMEMultipart
 import os
 
 app = Flask(__name__)
-app.secret_key = "tu_clave_secreta_aqui"  # Cambia esto por algo seguro
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "tu_clave_secreta_aqui")  # Cambia por algo seguro
 
 # ---------------- CONEXIÓN A MONGO ATLAS ----------------
-MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://al222311501:85bV4V9aT4y8mzvY@cluster0.ovqux33.mongodb.net/?retryWrites=true&w=majority")
+MONGO_URI = os.getenv("MONGO_URI", "mongodb+srv://fonacottoluca385:GUZCSZWL-VEr4yw@cluster0.mx9qqtg.mongodb.net/encuesta_credito?retryWrites=true&w=majority&appName=Cluster0")
 MONGO_DB = os.getenv("MONGO_DB", "encuesta_credito")
 
-client = MongoClient(MONGO_URI)
-db = client[MONGO_DB]
-respuestas = db["respuestas"]
-# ---------------------------------------------------------
+try:
+    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)  # 5s timeout
+    db = client[MONGO_DB]
+    respuestas = db["respuestas"]
+    client.server_info()  # Verifica la conexión
+    print("✅ Conexión a MongoDB Atlas exitosa")
+except Exception as e:
+    print(f"❌ Error conectando a MongoDB Atlas: {e}")
+    respuestas = None  # Para evitar que la app falle
 
+# ---------------- USUARIOS ----------------
 USUARIOS = {
     "RAUL GARRIDO": "TOLUCA2065",
     "ANGELICA CORONEL": "INFONA2025",
@@ -25,8 +31,8 @@ USUARIOS = {
 }
 
 # ------------------- CONFIGURACIÓN DE CORREO -------------------
-EMAIL_SENDER = "fonacottoluca385@gmail.com"  # Cambia por tu correo Gmail
-EMAIL_PASSWORD = "jmhcmnihkibwxcyx"  # Tu contraseña de aplicación de Gmail
+EMAIL_SENDER = os.getenv("EMAIL_SENDER", "fonacottoluca385@gmail.com")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD", "jmhcmnihkibwxcyx")  # Contraseña de aplicación Gmail
 
 def enviar_correo(nip, correo_receptor, numero):
     try:
@@ -56,9 +62,17 @@ def portada():
 @app.route('/encuesta', methods=['GET', 'POST'])
 def encuesta():
     if request.method == 'POST':
+        if respuestas is None:
+            flash("Error: No se puede conectar a la base de datos. Intenta más tarde.")
+            return render_template('encuesta.html')
+
         datos = request.form.to_dict()
         datos['fecha'] = datetime.now().strftime("%Y-%m-%d")
-        respuestas.insert_one(datos)
+        try:
+            respuestas.insert_one(datos)
+        except Exception as e:
+            flash(f"Error al guardar los datos: {e}")
+            return render_template('encuesta.html')
 
         nip = datos.get('nip', '******')
         correo = datos.get('correo', 'No proporcionado')
@@ -102,8 +116,12 @@ def estadisticas():
 def datos_grafico():
     if 'usuario' not in session:
         return {"error": "No autorizado"}, 401
-    data = list(respuestas.find({}, {'_id': 0}))
-    return {"data": data}
+    try:
+        data = list(respuestas.find({}, {'_id': 0}))
+        return {"data": data}
+    except Exception as e:
+        return {"error": f"No se pudieron obtener los datos: {e}"}, 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)), debug=True)
+
